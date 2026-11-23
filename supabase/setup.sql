@@ -23,6 +23,13 @@ begin
 end $$;
 alter table public.profiles enable row level security;
 
+-- Signed-in users may reach these tables; the access rules below decide which rows.
+-- Visitors who are not signed in get nothing.
+grant usage on schema public to authenticated;
+grant select, insert, update, delete
+  on public.staff, public.leads, public.jobs, public.workers, public.settings, public.clocks
+  to authenticated;
+
 -- ---------------------------------------------------------------- who am I
 create or replace function public.my_email() returns text
 language sql stable security definer set search_path = public as
